@@ -24,12 +24,9 @@ pip install -r requirements.txt
 ```
 
 3. Set up your environment variables:
-```bash
-# For OpenAI
-export OPENAI_API_KEY=your_api_key_here
-
-# For Anthropic (if using)
-export ANTHROPIC_API_KEY=your_api_key_here
+```
+# Copy the example.env file and update with your configuration
+cp example.env .env
 ```
 
 ## Usage
@@ -37,13 +34,20 @@ export ANTHROPIC_API_KEY=your_api_key_here
 ### Basic Usage
 
 ```python
-from langchain_openai import ChatOpenAI
+from langchain_aws import ChatBedrock
 from calc_agent.calculator import CalculatorAgent
-from calc_agent.llm_provider import OpenAIProvider
+from calc_agent.llm_provider import BedrockAnthropicProvider
 
-# Initialize with OpenAI
-llm = ChatOpenAI()
-provider = OpenAIProvider(llm)
+# Initialize with Amazon Bedrock
+llm = ChatBedrock(
+    model_id="anthropic.claude-v2",  # or your chosen model
+    region_name="us-east-1",         # your AWS region
+    model_kwargs={
+        "max_tokens": 1000,
+        "temperature": 0.5,
+    }
+)
+provider = BedrockAnthropicProvider(llm)
 calculator = CalculatorAgent(provider)
 
 # Calculate area of a triangle
@@ -54,7 +58,7 @@ print(f"Area of triangle: {result}")  # Output: Area of triangle: 7.5
 
 # Calculate average of numbers
 result = calculator.calculate(
-    "Find the average of three numbers 10, 20, 30"
+    "Calculate the average of 10, 20, and 30"
 )
 print(f"Average: {result}")  # Output: Average: 20.0
 ```
@@ -145,4 +149,12 @@ calculator.calculate("Add 3 and 5 together")
 calculator.calculate("Write a web server")  # Will fail
 ```
 
-For more help, please open an issue on GitHub. 
+For more help, please open an issue on GitHub.
+
+## TO-DO
+
+- [ ] Add OpenAI provider support
+- [ ] Add Azure OpenAI provider support
+- [ ] Add more example queries and use cases
+- [ ] Improve error handling and validation
+- [ ] Add unit tests for different providers
