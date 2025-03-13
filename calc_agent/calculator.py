@@ -1,9 +1,17 @@
-from typing import Any, Dict, List
+from typing import Any, Dict, List, TypedDict
 from langgraph.graph import Graph, StateGraph
 from langchain_core.messages import AIMessage, HumanMessage
 from langchain_core.prompts import ChatPromptTemplate
 from .agent import CalcTool
 from .llm_provider import LLMProvider
+
+
+# Define a TypedDict for the state schema
+class CalcState(TypedDict):
+    query: str
+    args: List[Any]
+    code: str | None
+    result: Any | None
 
 
 class CalculatorAgent:
@@ -12,10 +20,10 @@ class CalculatorAgent:
         self.calc_tool = CalcTool()
         
     def create_graph(self) -> Any:
-        workflow = StateGraph(Dict)
+        workflow = StateGraph(CalcState)
         
         # Define the nodes
-        def parse_input(state: Dict):
+        def parse_input(state: CalcState) -> Dict:
             query = state["query"]
             
             # Generate code and arguments using the LLM provider
@@ -26,7 +34,7 @@ class CalculatorAgent:
                 "args": result["arguments"]
             }
             
-        def execute_calculation(state: Dict):
+        def execute_calculation(state: CalcState) -> Dict:
             code = state["code"]
             args = state["args"]
             
