@@ -78,23 +78,6 @@ class LLMProvider(ABC):
             logging.error(f"Failed to parse response: {response}")
             raise ValueError(f"Failed to parse LLM response as JSON: {str(e)}")
 
-class OpenAIProvider(LLMProvider):
-    def __init__(self, llm: Any):
-        super().__init__()
-        self.llm = llm
-        self.prompt = """
-        You are a Python code generator. Convert the following natural language query into a Python function.
-        The function should only contain mathematical operations.
-        
-        Query: {query}
-        
-        Return only the Python function code, no explanations.
-        """
-        
-    @retry_with_exponential_backoff()
-    def generate_code_and_args(self, query: str) -> Dict[str, Any]:
-        response = self.llm.invoke(self.prompt.format(query=query))
-        return self._parse_json_response(str(response))
 
 class AnthropicProvider(LLMProvider):
     def __init__(self, anthropic_client: Anthropic):
@@ -114,23 +97,6 @@ class AnthropicProvider(LLMProvider):
         response = self.client.invoke(self.base_prompt.format(query=query))
         return self._parse_json_response(str(response))
 
-class AzureOpenAIProvider(LLMProvider):
-    def __init__(self, llm: AzureChatOpenAI):
-        super().__init__()
-        self.llm = llm
-        self.prompt = """
-        You are a Python code generator. Convert the following natural language query into a Python function.
-        The function should only contain mathematical operations.
-        
-        Query: {query}
-        
-        Return only the Python function code, no explanations.
-        """
-        
-    @retry_with_exponential_backoff()
-    def generate_code_and_args(self, query: str) -> Dict[str, Any]:
-        response = self.llm.invoke(self.base_prompt.format(query=query))
-        return self._parse_json_response(str(response))
 
 class BedrockAnthropicProvider(LLMProvider):
     def __init__(self, llm: BedrockLLM):
