@@ -82,7 +82,9 @@ calc_agent/
 ├── agent.py        # Core calculation tool implementation
 ├── calculator.py   # Main calculator agent with graph workflow
 ├── llm_provider.py # LLM provider interfaces
-└── example.py      # Usage examples
+docs/
+└── example/
+    └── openai.py   # OpenAI usage examples
 ```
 
 ## Safety and Limitations
