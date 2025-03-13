@@ -1,4 +1,8 @@
 langchain
 langgraph
 langchain-openai
-python-dotenv 
+langchain-anthropic
+python-dotenv
+anthropic
+boto3
+openai>=1.0.0 
