@@ -1,6 +1,7 @@
 from langchain_openai import ChatOpenAI
-from .calculator import CalculatorAgent
-from .llm_provider import OpenAIProvider
+from calc_agent.calculator import CalculatorAgent
+from calc_agent.llm_provider import OpenAIProvider
+
 
 def main():
     # Initialize with OpenAI
@@ -20,5 +21,6 @@ def main():
     result = calculator.calculate(query, [10, 20, 30])
     print(f"Average: {result}")
 
+
 if __name__ == "__main__":
-    main() 
+    main()
