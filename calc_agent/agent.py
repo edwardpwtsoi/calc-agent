@@ -7,21 +7,23 @@ from langchain.tools import tool
 import ast
 import re
 
+
 class CalcTool(BaseTool):
-    name = "calculator"
-    description = "Useful for executing mathematical calculations from natural language"
+    name: str = "calculator"
+    description: str = "Useful for executing mathematical calculations from natural language"
     
     def _run(self, query: str, args: Optional[List[Any]] = None) -> float:
         """Execute the calculation based on the query and arguments"""
         try:
-            # First get the code from the query
+            # Get code and arguments from the query
             generated_code = self._generate_code(query)
             
             # Execute the code with provided arguments
             result = self._execute_code(generated_code, args or [])
             return result
         except Exception as e:
-            return f"Error executing calculation: {str(e)}"
+            # Return float error value instead of string
+            raise ValueError(f"Error executing calculation: {str(e)}")
 
     def _generate_code(self, query: str) -> str:
         """Generate Python code from natural language query"""
@@ -34,7 +36,7 @@ class CalcTool(BaseTool):
         if not self._is_safe_code(code):
             raise ValueError("Invalid code - only mathematical operations allowed")
             
-        namespace = {}
+        namespace: Dict[str, Any] = {}
         try:
             exec(code, namespace)
             # Find the function name in the code
@@ -44,7 +46,7 @@ class CalcTool(BaseTool):
                 
             func_name = func_match.group(1)
             func = namespace[func_name]
-            return func(*args)
+            return float(func(*args))  # Ensure float return type
         except Exception as e:
             raise RuntimeError(f"Error executing code: {str(e)}")
 

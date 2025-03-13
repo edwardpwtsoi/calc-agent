@@ -5,25 +5,25 @@ from langchain_core.prompts import ChatPromptTemplate
 from .agent import CalcTool
 from .llm_provider import LLMProvider
 
+
 class CalculatorAgent:
     def __init__(self, llm_provider: LLMProvider):
         self.llm_provider = llm_provider
         self.calc_tool = CalcTool()
         
-    def create_graph(self) -> Graph:
-        workflow = StateGraph(StateType=Dict)
+    def create_graph(self) -> Any:
+        workflow = StateGraph(Dict)
         
         # Define the nodes
         def parse_input(state: Dict):
             query = state["query"]
-            args = state.get("args", [])
             
-            # Generate code using the LLM provider
-            code = self.llm_provider.generate_code(query)
+            # Generate code and arguments using the LLM provider
+            result = self.llm_provider.generate_code_and_args(query)
             
             return {
-                "code": code,
-                "args": args
+                "code": result["code"],
+                "args": result["arguments"]
             }
             
         def execute_calculation(state: Dict):
@@ -49,7 +49,7 @@ class CalculatorAgent:
         
         return workflow.compile()
 
-    def calculate(self, query: str, args: List[Any] = None) -> Any:
+    def calculate(self, query: str, args: List[Any] | None = None) -> Any:
         """Execute a calculation from natural language query"""
         graph = self.create_graph()
         
@@ -58,4 +58,4 @@ class CalculatorAgent:
             "args": args or []
         })
         
-        return result["result"] 
+        return result["result"]
