@@ -1,9 +1,8 @@
 from abc import ABC, abstractmethod
 import logging
-from typing import Any, Dict, Optional, Callable
-from langchain_openai import AzureChatOpenAI
+from typing import Any, Dict, Callable
 from langchain_aws import BedrockLLM
-from langchain_community.llms.anthropic import Anthropic
+from langchain_anthropic import ChatAnthropic
 import json
 import time
 from functools import wraps
@@ -80,22 +79,29 @@ class LLMProvider(ABC):
 
 
 class AnthropicProvider(LLMProvider):
-    def __init__(self, anthropic_client: Anthropic):
+    def __init__(self, anthropic_client: ChatAnthropic):
         super().__init__()
         self.client = anthropic_client
-        self.prompt = """
-        You are a Python code generator. Convert the following natural language query into a Python function.
-        The function should only contain mathematical operations.
-        
-        Query: {query}
-        
-        Return only the Python function code, no explanations.
-        """
         
     @retry_with_exponential_backoff()
     def generate_code_and_args(self, query: str) -> Dict[str, Any]:
-        response = self.client.invoke(self.base_prompt.format(query=query))
-        return self._parse_json_response(str(response))
+        """Generate code and arguments from the query using Anthropic"""
+        logging.info(f"Generating code and arguments for query: {query}")
+
+        messages = [
+            ("system", "You are a Python code generator. Convert natural language queries into Python functions that contain only mathematical operations."),
+            ("human", self.base_prompt.format(query=query))
+        ]
+
+        response = self.client.invoke(messages)
+        # Log token usage
+        if hasattr(response, 'usage_metadata'):
+            logging.info(f"Token usage - Input: {response.usage_metadata['input_tokens']}, "
+                        f"Output: {response.usage_metadata['output_tokens']}, "
+                        f"Total: {response.usage_metadata['total_tokens']}")
+        
+        # Parse and return the response
+        return self._parse_json_response(response.content)
 
 
 class BedrockAnthropicProvider(LLMProvider):
