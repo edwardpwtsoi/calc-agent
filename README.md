@@ -48,15 +48,13 @@ calculator = CalculatorAgent(provider)
 
 # Calculate area of a triangle
 result = calculator.calculate(
-    "Create a function to calculate the area of a triangle given base and height",
-    [5, 3]
+    "Calculate the area of a triangle given base 5 and height 3"
 )
 print(f"Area of triangle: {result}")  # Output: Area of triangle: 7.5
 
 # Calculate average of numbers
 result = calculator.calculate(
-    "Write a function to find the average of three numbers",
-    [10, 20, 30]
+    "Find the average of three numbers 10, 20, 30"
 )
 print(f"Average: {result}")  # Output: Average: 20.0
 ```
@@ -112,16 +110,16 @@ Here are some example queries you can try:
 
 ```python
 # Area calculations
-"Calculate the area of a circle given its radius"
-"Find the surface area of a cube given its side length"
+"Calculate the area of a circle given its radius is 5"
+"Find the surface area of a cube given its side length is 3"
 
 # Statistical operations
-"Calculate the standard deviation of a list of numbers"
-"Find the median of five numbers"
+"Calculate the standard deviation of a list of numbers 1, 2, 3, 4, 5"
+"Find the median of five numbers 1, 2, 3, 4, 5"
 
 # Basic math
-"Multiply three numbers together"
-"Calculate the sum of squares for a list of numbers"
+"Multiply three numbers together 2, 3, 4"
+"Calculate the sum of squares for a list of numbers 1, 2, 3, 4, 5"
 ```
 
 ## Troubleshooting
@@ -141,10 +139,10 @@ echo $OPENAI_API_KEY  # Should show your API key
 3. **Execution Errors**: Check that your query is clear and mathematical
 ```python
 # Good query
-calculator.calculate("Add two numbers together", [5, 3])
+calculator.calculate("Add 3 and 5 together")
 
 # Bad query (non-mathematical)
-calculator.calculate("Write a web server", [])  # Will fail
+calculator.calculate("Write a web server")  # Will fail
 ```
 
 For more help, please open an issue on GitHub. 
